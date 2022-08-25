@@ -32,7 +32,7 @@ public class POSTMethod {
 
         Gson gson = new Gson();
         PostBody postBody = new PostBody();
-        postBody.setUserID(1);
+        postBody.setUserId(1);
         postBody.setTitle("the request's title");
         postBody.setBody("the req's body");
 
