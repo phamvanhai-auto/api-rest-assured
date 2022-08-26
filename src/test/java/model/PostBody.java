@@ -3,7 +3,7 @@ package model;
 public class PostBody {
 
     int userId;
-    int Id;
+    int id;
     String title;
     String body;
 
@@ -12,7 +12,7 @@ public class PostBody {
 
     public PostBody(int userId, int id, String title, String body) {
         this.userId = userId;
-        Id = id;
+        this.id = id;
         this.title = title;
         this.body = body;
     }
@@ -22,7 +22,7 @@ public class PostBody {
     }
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public String getTitle() {
@@ -38,7 +38,7 @@ public class PostBody {
     }
 
     public void setId(int id) {
-        this.Id = id;
+        this.id = id;
     }
 
     public void setTitle(String title) {
@@ -53,7 +53,7 @@ public class PostBody {
     public String toString() {
         return "PostBody{" +
                 "userId=" + userId +
-                ", Id=" + Id +
+                ", Id=" + id +
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +
                 '}';
