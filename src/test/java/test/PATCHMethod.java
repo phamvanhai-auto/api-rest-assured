@@ -27,6 +27,7 @@ public class PATCHMethod implements RequestCapability {
         PostBody postBody = new PostBody();
         postBody.setTitle("Edit Title");
         String postBodyStr = BuildJsonModel.parseJSONString(postBody);
+
         Response response = request.body(postBodyStr).patch("/posts/".concat(TARGET_POST_NUM));
         response.prettyPrint();
         response.then().body("title", equalTo(postBody.getTitle()));
