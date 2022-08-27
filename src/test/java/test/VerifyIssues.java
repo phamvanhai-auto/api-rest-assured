@@ -1,8 +1,7 @@
 package test;
 
-import builder.BodyJSONBuilder;
 import builder.IssueContentBuilder;
-import com.google.gson.Gson;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import model.IssueFields;
@@ -11,9 +10,11 @@ import org.apache.commons.lang3.RandomStringUtils;
 import utils.AuthenticationHandler;
 import utils.ProjectInfo;
 
+import java.util.Map;
+
 import static io.restassured.RestAssured.given;
 
-public class JiraNewIssue implements RequestCapability {
+public class VerifyIssues implements RequestCapability {
 
     public static void main(String[] args) {
 
@@ -42,20 +43,36 @@ public class JiraNewIssue implements RequestCapability {
     boolean hasNumbers = true;
     String randomSummary = RandomStringUtils.random(desiredLength, hasLetters, hasNumbers);
 
-//    IssueFields.IssueType issueType = new IssueFields.IssueType(taskTypeId);
-//    IssueFields.Project project = new IssueFields.Project("RAA");
-//    IssueFields.Fields fields = new IssueFields.Fields(summary, issueType, project);
-//    IssueFields issueFields = new IssueFields(fields);
     IssueContentBuilder issueContentBuilder = new IssueContentBuilder();
     String issueFieldsContent = issueContentBuilder.build(randomSummary, taskTypeId, projectKey);
 
-    //Response response = request.body(new Gson().toJson(issueFields)).post(apiPath);
-
-    //Response response = request.body(BodyJSONBuilder.getJSONContent(issueFields)).post(apiPath);
-
-    //Đóng gói gọi hàm
+    // CREATE ISSUE
     Response response = request.body(issueFieldsContent).post(apiPath);
+    //response.prettyPrint();
+
+    // get method to show issue details
+    Map<String, String> responseBody = JsonPath.from(response.asString()).get();
+    String apiIssuePath = "/rest/api/3/issue/" + responseBody.get("key");
+
+    // READ ISSUE JUST CREATED
+    response = request.get(apiIssuePath);
     response.prettyPrint();
+
+    IssueFields issueFields = issueContentBuilder.getIssueFields();
+    String expectedSummary = issueFields.getFields().getSummary();
+    String expectedStatus = "To Do";
+
+    Map<String, Object> fields = JsonPath.from(response.getBody().asString()).get("fields");
+    String actualSummary = fields.get("summary").toString();
+    Map<String, Object> status = (Map<String, Object>) fields.get("status");
+    Map<String, Object> statusCategory = (Map<String, Object>) status.get("statusCategory");
+    String actualStatus = (String) statusCategory.get("name");
+
+    System.out.println(expectedSummary);
+    System.out.println(actualSummary);
+
+    System.out.println(expectedStatus);
+    System.out.println(actualStatus);
 
 
     }
