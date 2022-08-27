@@ -27,7 +27,7 @@ public class ProjectInfo implements RequestCapability{
     }
 
     public String getIssueTypeId(String issueTypeStr){
-       getIssueTypes();
+        getIssueTypes();
         String issueTypeId = null;
 
         for (Map<String, String> issueType : issueTypes) {
@@ -50,7 +50,7 @@ public class ProjectInfo implements RequestCapability{
 
         String apiPath = "/rest/api/3/project/".concat(projectKey);
 
-        String email = "haipv6@gmail.com";
+        String email = "qa.haipv6@gmail.com";
         String apiToken = "OqAXeSeIX2toPFWWzSTlA075";
         String cred = email.concat(":").concat(apiToken);
         byte[] encodeCred = Base64.encodeBase64(cred.getBytes(StandardCharsets.UTF_8));

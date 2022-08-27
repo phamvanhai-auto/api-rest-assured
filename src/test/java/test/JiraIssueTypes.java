@@ -19,7 +19,7 @@ public class JiraIssueTypes implements RequestCapability {
         String baseUri = "https://phamvanhai-jira.atlassian.net";
         String apiPath = "/rest/api/3/project/RAA";
 
-        String email = "haipv6@gmail.com";
+        String email = "qa.haipv6@gmail.com";
         String apiToken = "OqAXeSeIX2toPFWWzSTlA075";
         String cred = email.concat(":").concat(apiToken);
         byte[] encodeCred = Base64.encodeBase64(cred.getBytes(StandardCharsets.UTF_8));
@@ -36,8 +36,11 @@ public class JiraIssueTypes implements RequestCapability {
 
         Map<String, Object> projectInfo = JsonPath.from(response.asString()).get();
         List<Map<String, String>> issueTypes = (List<Map<String, String>>) projectInfo.get("issueTypes");
+
         for (Map<String, String> issueType : issueTypes) {
             System.out.println(issueType.get("id"));
+            System.out.println(issueType.get("name"));
+            System.out.println("====");
         }
     }
 

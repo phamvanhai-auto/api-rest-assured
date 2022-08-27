@@ -21,7 +21,8 @@ public class JiraIssueTypesOK implements RequestCapability {
         String projectKey = "RAA";
 
         ProjectInfo projectInfo = new ProjectInfo(baseUri, projectKey);
-        System.out.println("Task ID: " +projectInfo.getIssueTypeId("task"));
+        System.out.println("Task ID: " + projectInfo.getIssueTypeId("10003"));
+        System.out.println("Task ID: " + projectInfo.getIssueTypeId("epic"));
     }
 
 }
