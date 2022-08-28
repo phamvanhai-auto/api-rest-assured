@@ -10,11 +10,13 @@ import org.apache.commons.lang3.RandomStringUtils;
 import utils.AuthenticationHandler;
 import utils.ProjectInfo;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import static io.restassured.RestAssured.given;
 
-public class VerifyIssues implements RequestCapability {
+public class VerifyIssuesOK implements RequestCapability {
 
     public static void main(String[] args) {
 
@@ -53,27 +55,35 @@ public class VerifyIssues implements RequestCapability {
     // return body content
     Map<String, String> responseBody = JsonPath.from(response.asString()).get();
     final String ISSUE_KEY = responseBody.get("key");
-    String apiIssuePath = "/rest/api/3/issue/" + ISSUE_KEY;
-
-    // READ ISSUE JUST CREATED
-    response = request.get(apiIssuePath);
-    //response.prettyPrint();
 
     IssueFields issueFields = issueContentBuilder.getIssueFields();
     String expectedSummary = issueFields.getFields().getSummary();
     String expectedStatus = "To Do";
 
-    Map<String, Object> fields = JsonPath.from(response.getBody().asString()).get("fields");
-    String actualSummary = fields.get("summary").toString();
-    Map<String, Object> status = (Map<String, Object>) fields.get("status");
-    Map<String, Object> statusCategory = (Map<String, Object>) status.get("statusCategory");
-    String actualStatus = (String) statusCategory.get("name");
+    Function<String, Map<String, String>> getIssueInfo = issueKey -> {
+        String apiIssuePath = "/rest/api/3/issue/" + issueKey;
+        // READ ISSUE JUST CREATED
+        Response response_1 = request.get(apiIssuePath);
+
+        Map<String, Object> fields = JsonPath.from(response_1.getBody().asString()).get("fields");
+        String actualSummary = fields.get("summary").toString();
+        Map<String, Object> status = (Map<String, Object>) fields.get("status");
+        Map<String, Object> statusCategory = (Map<String, Object>) status.get("statusCategory");
+        String actualStatus = (String) statusCategory.get("name");
+
+        Map<String, String> issueInfo = new HashMap<>();
+        issueInfo.put("summary", actualSummary);
+        issueInfo.put("status", actualStatus);
+        return issueInfo;
+    };
+
+    Map<String, String> issueInfo = getIssueInfo.apply(ISSUE_KEY);
 
     System.out.println(expectedSummary);
-    System.out.println(actualSummary);
+    System.out.println(issueInfo.get("summary"));
 
     System.out.println(expectedStatus);
-    System.out.println(actualStatus);
+    System.out.println(issueInfo.get("status"));
 
     //UPDATE ISSUE
         //Get transitions id
@@ -83,13 +93,17 @@ public class VerifyIssues implements RequestCapability {
 
     String trasitionBody = "{\n" +
             "  \"transition\": {\n" +
-            "    \"id\": \"31\"\n" +
+            "    \"id\": \"21\"\n" +
             "  }\n" +
             "}";
 
     //Transition issue
     String apiTransitionPath = "/rest/api/3/issue/" + ISSUE_KEY + "/transitions";
     request.body(trasitionBody).post(apiTransitionPath).then().statusCode(204);
+    issueInfo = getIssueInfo.apply(ISSUE_KEY);
+    String lastestIssueStatus = issueInfo.get("status");
+    System.out.println(lastestIssueStatus);
+
 
     }
 }
