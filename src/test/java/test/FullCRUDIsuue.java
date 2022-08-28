@@ -11,18 +11,19 @@ import utils.AuthenticationHandler;
 import utils.ProjectInfo;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import static io.restassured.RestAssured.given;
 
-public class VerifyIssuesOK implements RequestCapability {
+public class FullCRUDIsuue implements RequestCapability {
 
     public static void main(String[] args) {
 
 
     String baseUri = "https://phamvanhai-jira.atlassian.net";
-    String apiPath = "/rest/api/3/issue";
+    String apiCreateIssuePath = "/rest/api/3/issue";
     String projectKey = "RAA";
 
     String email = "qa.haipv6@gmail.com";
@@ -49,7 +50,7 @@ public class VerifyIssuesOK implements RequestCapability {
     String issueFieldsContent = issueContentBuilder.build(randomSummary, taskTypeId, projectKey);
 
     // CREATE ISSUE
-    Response response = request.body(issueFieldsContent).post(apiPath);
+    Response response = request.body(issueFieldsContent).post(apiCreateIssuePath);
     //response.prettyPrint();
 
     // return body content
@@ -64,6 +65,7 @@ public class VerifyIssuesOK implements RequestCapability {
         String apiIssuePath = "/rest/api/3/issue/" + issueKey;
         // READ ISSUE JUST CREATED
         Response response_1 = request.get(apiIssuePath);
+        //response_1.prettyPrint();
 
         Map<String, Object> fields = JsonPath.from(response_1.getBody().asString()).get("fields");
         String actualSummary = fields.get("summary").toString();
@@ -104,6 +106,15 @@ public class VerifyIssuesOK implements RequestCapability {
     String lastestIssueStatus = issueInfo.get("status");
     System.out.println(lastestIssueStatus);
 
+    //DELETE ISSUE
+    String apiDeletePath = "/rest/api/3/issue/" + ISSUE_KEY;
+    request.delete(apiDeletePath);
 
+        //getIssue to verify delete successfully
+    String apiIssuePath = "/rest/api/3/issue/" + ISSUE_KEY;
+    response = request.get(apiIssuePath);
+    Map<String, Object> errorReturn = JsonPath.from(response.body().asString()).get();
+    List<String> errorMessages = (List<String>) errorReturn.get("errorMessages");
+    System.out.println(errorMessages.get(0));
     }
 }
