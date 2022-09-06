@@ -21,7 +21,6 @@ public class FullCRUDIsuue implements RequestCapability {
 
     public static void main(String[] args) {
 
-
     String baseUri = "https://phamvanhai-jira.atlassian.net";
     String apiCreateIssuePath = "/rest/api/3/issue";
     String projectKey = "RAA";
@@ -90,8 +89,15 @@ public class FullCRUDIsuue implements RequestCapability {
     //UPDATE ISSUE
         //Get transitions id
     String apiTransitionIdPath = "/rest/api/3/issue/" + ISSUE_KEY + "/transitions";
-    request.get(apiTransitionIdPath);
-    final String DONE_TRANSITION_ID = "31";
+    response = request.get(apiTransitionIdPath);
+    Map<String, Object> transitionInfo = JsonPath.from(response.getBody().asString()).get();
+    List<Map<String, String>> transitions = (List<Map<String, String>>) transitionInfo.get("transitions");
+        for (Map<String, String> transition : transitions) {
+            System.out.println(transition.get("id"));
+            System.out.println(transition.get("name"));
+            System.out.println("=======");
+        }
+    //final String DONE_TRANSITION_ID = "31";
 
     String trasitionBody = "{\n" +
             "  \"transition\": {\n" +
@@ -113,6 +119,7 @@ public class FullCRUDIsuue implements RequestCapability {
         //getIssue to verify delete successfully
     String apiIssuePath = "/rest/api/3/issue/" + ISSUE_KEY;
     response = request.get(apiIssuePath);
+    response.prettyPrint();
     Map<String, Object> errorReturn = JsonPath.from(response.body().asString()).get();
     List<String> errorMessages = (List<String>) errorReturn.get("errorMessages");
     System.out.println(errorMessages.get(0));
