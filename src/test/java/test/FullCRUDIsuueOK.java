@@ -8,6 +8,7 @@ import io.restassured.specification.RequestSpecification;
 import model.IssueFields;
 import model.RequestCapability;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.testng.annotations.Test;
 import utils.AuthenticationHandler;
 import utils.ProjectInfo;
 
@@ -20,7 +21,8 @@ import static io.restassured.RestAssured.given;
 
 public class FullCRUDIsuueOK implements RequestCapability {
 
-    public static void main(String[] args) {
+    @Test
+    public void API_Flow() {
 
         String baseUri = "https://phamvanhai-jira.atlassian.net";
         String projectKey = "RAA";

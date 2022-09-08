@@ -68,10 +68,10 @@ public class IssueFlow {
         String actualStatus = issueInfo.get("status");
 
         System.out.println(expectedSummary);
-        System.out.println(issueInfo.get("summary"));
+        System.out.println(actualSummary);
 
         System.out.println(expectedStatus);
-        System.out.println(issueInfo.get("status"));
+        System.out.println(actualStatus);
 
     }
 
